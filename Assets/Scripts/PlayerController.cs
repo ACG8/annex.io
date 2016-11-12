@@ -27,18 +27,24 @@ public class PlayerController : MonoBehaviour {
 		if (Input.GetMouseButtonDown (0)) {
 			GameObject target = ClickSelectCell ();
 			if (target != null && target.GetPhotonView ().isMine)
-				Debug.Log ("target: " + target);
 				selectedCell = target;
 		}
 		if (Input.GetMouseButtonUp (0) ) {
-			Debug.Log ("Selected cell: " + selectedCell);
 			if (selectedCell != null && selectedCell.GetPhotonView().isMine) {
 				Vector2 mousePos = new Vector2 (Camera.main.ScreenToWorldPoint (Input.mousePosition).x, Camera.main.ScreenToWorldPoint (Input.mousePosition).y);
-				Vector2 displacement = selectedCell.transform.InverseTransformPoint (mousePos);
+				Vector2 localDisplacement = selectedCell.transform.InverseTransformPoint (mousePos);
 
-				if (displacement.magnitude > 0.5) {
-					Vector2 unitVector = displacement / displacement.magnitude;
-					Vector2 gridVector = new Vector2 (Mathf.Round (unitVector.x), Mathf.Round (unitVector.y));
+				if (localDisplacement.magnitude > 0.5) {
+					Vector2 unitVector = localDisplacement / localDisplacement.magnitude;
+					//round to nearest 60 degrees
+					float angle = Vector2.Angle(selectedCell.transform.up, localDisplacement);
+					if (localDisplacement.x < 0)
+						angle = -angle;
+					angle = Mathf.Deg2Rad * Mathf.Round (angle / 60) * 60;
+					Debug.Log ("angle: " + angle);
+					Vector2 gridVector = new Vector2 (Mathf.Sin (angle), Mathf.Cos (angle));
+					Debug.Log ("gridvector: " + gridVector);
+					//Vector2 gridVector = new Vector2 (Mathf.Round (unitVector.x), Mathf.Round (unitVector.y));
 					Cell_SpawnCell spawnscript = selectedCell.GetComponent<Cell_SpawnCell> ();
 					if (spawnscript != null) {
 						Debug.Log ("creating cell at " + gridVector);
@@ -53,9 +59,7 @@ public class PlayerController : MonoBehaviour {
 
 	// Method for selecting a cell by clicking
 	GameObject ClickSelectCell() {
-		Debug.Log ("finding raypos");
 		Vector2 rayPos = new Vector2 (Camera.main.ScreenToWorldPoint (Input.mousePosition).x, Camera.main.ScreenToWorldPoint (Input.mousePosition).y);
-		Debug.Log (rayPos);
 		RaycastHit2D hit = Physics2D.Raycast (rayPos, Vector2.zero, 0f);
 
 		if (hit != null && hit.transform.GetComponent<Cell>() != null)
