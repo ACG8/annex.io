@@ -3,9 +3,8 @@ using System.Collections;
 
 public class Player : Photon.MonoBehaviour {
 
-	private Vector3 targetPos;
-	public float movespeed = 5.0f;
-
+	private bool active = false;
+	public float forcemultiplier = 1f;
 	//Synchronization variables
 	private float lastSynchronizationTime = 0f;
 	private float syncDelay = 0f;
@@ -21,23 +20,16 @@ public class Player : Photon.MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		//Only control my player object
-		if (photonView.isMine)
-			InputMovement ();
-		else
-			SyncedMovement ();
+	//	if (photonView.isMine)
+	//		InputCommands ();
+	//	else
+	//		SyncedCommand ();
 	}
 
-	private void InputMovement() {
-		// Update target location
-		if (Input.GetMouseButton (1)) {
-			targetPos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-			targetPos.z = transform.position.z;
-		}
-		//Move toward target location
-		transform.position = Vector3.MoveTowards (transform.position, targetPos, movespeed * Time.deltaTime);
-	}
 
-	private void SyncedMovement() {
+
+
+	private void SyncedCommand() {
 		syncTime += Time.deltaTime;
 		transform.position = Vector3.Lerp (syncStartPosition, syncEndPosition, syncTime / syncDelay);
 	}
