@@ -12,8 +12,6 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void inputCommands() {
-		
-
 		//Right clicking on a cell you control toggles its activity
 		if (Input.GetMouseButtonDown (1)) {
 			// Toggle cell behavior depending on attached scripts
@@ -35,19 +33,15 @@ public class PlayerController : MonoBehaviour {
 				Vector2 localDisplacement = selectedCell.transform.InverseTransformPoint (mousePos);
 
 				if (localDisplacement.magnitude > 0.5) {
-					Vector2 unitVector = localDisplacement / localDisplacement.magnitude;
 					//round to nearest 60 degrees
-					float angle = Vector2.Angle(selectedCell.transform.up, localDisplacement);
-					if (localDisplacement.x < 0)
+					float angle = Vector2.Angle(Vector2.up, localDisplacement);
+					if (localDisplacement.x > 0)
 						angle = -angle;
-					angle = Mathf.Deg2Rad * Mathf.Round (angle / 60) * 60;
-					Debug.Log ("angle: " + angle);
-					Vector2 gridVector = new Vector2 (Mathf.Sin (angle), Mathf.Cos (angle));
-					Debug.Log ("gridvector: " + gridVector);
-					//Vector2 gridVector = new Vector2 (Mathf.Round (unitVector.x), Mathf.Round (unitVector.y));
+					angle = Mathf.Deg2Rad * Mathf.Round (angle / 60) * 60; //angle being passed is in local space, position is from trans.up
+
+					Vector2 gridVector = new Vector2 (-Mathf.Sin (angle), Mathf.Cos (angle));
 					Cell_SpawnCell spawnscript = selectedCell.GetComponent<Cell_SpawnCell> ();
-					if (spawnscript != null) {
-						Debug.Log ("creating cell at " + gridVector);
+					if (spawnscript != null) { 
 						spawnscript.CreateNewCell (gridVector);
 					}
 				}
@@ -62,7 +56,7 @@ public class PlayerController : MonoBehaviour {
 		Vector2 rayPos = new Vector2 (Camera.main.ScreenToWorldPoint (Input.mousePosition).x, Camera.main.ScreenToWorldPoint (Input.mousePosition).y);
 		RaycastHit2D hit = Physics2D.Raycast (rayPos, Vector2.zero, 0f);
 
-		if (hit != null && hit.transform.GetComponent<Cell>() != null)
+		if (hit.collider != null && hit.transform.GetComponent<Cell>() != null)
 			return hit.collider.transform.gameObject;
 		else
 			return null;

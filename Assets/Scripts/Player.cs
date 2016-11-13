@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Player : Photon.MonoBehaviour {
 
-	private bool active = false;
+	//private bool active = false;
 	public float forcemultiplier = 1f;
 	//Synchronization variables
 	private float lastSynchronizationTime = 0f;
@@ -25,9 +25,7 @@ public class Player : Photon.MonoBehaviour {
 	//	else
 	//		SyncedCommand ();
 	}
-
-
-
+		
 
 	private void SyncedCommand() {
 		syncTime += Time.deltaTime;

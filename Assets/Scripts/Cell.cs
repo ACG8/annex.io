@@ -4,7 +4,7 @@ using System.Collections;
 public class Cell : MonoBehaviour {
 
 	private bool active = false;
-	private float health = 3f;
+	//private float health = 3f;
 
 	// Use this for initialization
 	void Start () {
@@ -29,7 +29,6 @@ public class Cell : MonoBehaviour {
 	public void LinkJointToNeighbor ( GameObject neighbor ) {
 		FixedJoint2D joint = transform.gameObject.AddComponent<FixedJoint2D> ();
 		joint.connectedBody = neighbor.GetComponent<Rigidbody2D> ();
-		Debug.Log("From " + joint.transform.gameObject + " to " + neighbor);
 	}
 
 	GameObject GetNeighborAtPosition(Vector2 pos) {
